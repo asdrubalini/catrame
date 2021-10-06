@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 RUN useradd -mU api
 USER api
@@ -8,4 +8,5 @@ RUN pip install -r /tmp/requirements.txt
 
 WORKDIR /usr/src/api/
 
-CMD ["python", "app/"]
+CMD ["python", "app/__main__.py"]
+
