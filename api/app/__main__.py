@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask.wrappers import Response
-from database import insert_reading, fetch_readings
+import database
 
 import json
 
@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET"])
 def index():
-    readings = fetch_readings()
+    readings = database.fetch_readings()
 
     html = ""
     for reading in readings:
@@ -18,7 +18,7 @@ def index():
     return html
 
 
-@app.route("/insert", methods=["POST", "GET"])
+@app.route("/insert", methods=["POST"])
 def insert_reading():
     data = request.json
 
@@ -28,7 +28,7 @@ def insert_reading():
     sensor_id = data["sensor_id"]
     temperature = data["temperature"]
 
-    insert_reading(sensor_id, temperature)
+    database.insert_reading(sensor_id, temperature)
 
     return "ok"
 
