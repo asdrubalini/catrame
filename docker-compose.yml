@@ -11,6 +11,8 @@ services:
       MYSQL_USER: giovanni
       MYSQL_PASSWORD: catrame
       MYSQL_DATABASE: giovanni
+    ports:
+      - 3306:3306
     volumes:
       - mariadb_data:/var/lib/mysql/
 
@@ -36,6 +38,7 @@ services:
       - nginx
     volumes:
       - api_deps_cache:/home/api/.cache/
+      - ./api:/usr/src/api/
   
   nginx:
     image: nginx:alpine

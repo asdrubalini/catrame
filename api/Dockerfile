@@ -7,6 +7,5 @@ ADD ./requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
 
 WORKDIR /usr/src/api/
-ADD . .
 
-CMD ["python", "__main__.py"]
+CMD ["python", "app/"]
