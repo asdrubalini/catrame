@@ -1,3 +1,4 @@
+from django.db.models.aggregates import Avg
 from django.http import HttpResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 
@@ -33,10 +34,10 @@ def readings(request: HttpRequest):
 
     readings_count = Reading.objects.count()
     readings = Reading.objects.all().order_by("-id")[:MAX_READINGS_COUNT]
+    average = round(Reading.objects.all().aggregate(Avg("temperature"))["temperature__avg"], 2)
 
-    html = (
-        f"<pre>There are {readings_count} readings, showing the last {MAX_READINGS_COUNT}</pre>"
-    )
+    html = f"<pre>There are {readings_count} readings, showing the last {MAX_READINGS_COUNT}</pre>"
+    html += f"<pre>The average temperature is {average} C</pre>"
 
     for reading in readings:
         html += "<pre>"
