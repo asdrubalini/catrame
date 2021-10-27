@@ -2,6 +2,7 @@ import time
 import requests
 import random
 from dataclasses import dataclass
+import threading
 
 API_ENDPOINT = "http://api:8000"
 
@@ -12,23 +13,45 @@ class Reading:
     temperature: float
 
 
-def get_random_reading() -> Reading:
+def get_random_reading(sensor_id: int) -> Reading:
     return Reading(
-        sensor_id=random.randint(1, 4), temperature=random.uniform(20.0, 25.0)
+        sensor_id=sensor_id, temperature=random.uniform(20.0, 25.0)
     )
 
 
 def insert_reading(reading: Reading):
     requests.post(
-        f"{API_ENDPOINT}/api/sensor",
-        json={"sensor_id": reading.sensor_id, "temperature": reading.temperature},
+        f"{API_ENDPOINT}/api/reading",
+        data={"sensor_id": reading.sensor_id, "temperature": reading.temperature},
     )
 
 
-if __name__ == "__main__":
-    while True:
-        reading = get_random_reading()
-        print(f"Inserting new reading: {reading}")
+class SensorThread(threading.Thread):
+    def __init__(self, sensor_id: int) -> None:
+        super().__init__()
 
-        insert_reading(reading)
+        self.sensor_id = sensor_id
+
+    def __random_sleep(self):
+        time.sleep(random.uniform(5.0, 30.0))
+
+    def run(self):
+        while True:
+            self.__random_sleep()
+
+            reading = get_random_reading(self.sensor_id)
+            print(
+                f"[Sensor: {self.sensor_id}] Inserting new reading: {reading}",
+                flush=True,
+            )
+
+            insert_reading(reading)
+
+
+if __name__ == "__main__":
+    for i in range(0, 100):
+        SensorThread(sensor_id=i).start()
+
+    # Sleep forever
+    while True:
         time.sleep(1)

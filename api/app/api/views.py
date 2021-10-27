@@ -1,10 +1,46 @@
 from django.http import HttpResponse, HttpRequest
+from django.views.decorators.csrf import csrf_exempt
+
+from .models import Reading, Sensor
+
+MAX_READINGS_COUNT = 128
 
 
+@csrf_exempt
 def reading(request: HttpRequest):
-    if request.method == "GET":
-        return HttpResponse("Hello, world. You're at the polls index.")
+    if request.method != "POST":
+        return HttpResponse("POST only")
 
-    elif request.method == "POST":
-        # Insert model
-        pass
+    if "sensor_id" not in request.POST or "temperature" not in request.POST:
+        return HttpResponse("Missing sensor_id or temperature", status=400)
+
+    sensor_id = request.POST["sensor_id"]
+    temperature = request.POST["temperature"]
+
+    print("Inserting: ", sensor_id, temperature, flush=True)
+
+    # Get or create sensor
+    sensor = Sensor.objects.get_or_create(sensor_id=sensor_id)[0]
+    # Insert reading
+    Reading.objects.create(sensor=sensor, temperature=temperature)
+
+    return HttpResponse("ok")
+
+
+def readings(request: HttpRequest):
+    if request.method != "GET":
+        return HttpResponse("GET only")
+
+    readings_count = Reading.objects.count()
+    readings = Reading.objects.all().order_by("-id")[:MAX_READINGS_COUNT]
+
+    html = (
+        f"<pre>There are {readings_count} readings, showing the last {MAX_READINGS_COUNT}</pre>"
+    )
+
+    for reading in readings:
+        html += "<pre>"
+        html += str(reading)
+        html += "</pre>"
+
+    return HttpResponse(html)

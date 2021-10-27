@@ -1,6 +1,7 @@
 FROM python:3.10-slim
 
 ENV PYTHONBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
 
 RUN apt update -y && \
     apt upgrade -y && \
@@ -14,7 +15,5 @@ RUN pip install -r /tmp/requirements.txt
 RUN useradd -mU api
 USER api
 
-COPY app/ /usr/src/app
+# COPY app/ /usr/src/app
 WORKDIR /usr/src/app/
-
-CMD ["python", "manage.py", "runserver"]

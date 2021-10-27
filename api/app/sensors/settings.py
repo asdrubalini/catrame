@@ -25,12 +25,12 @@ SECRET_KEY = "django-insecure-_wm%qpxc&bv_egx*z2@2^&x_*^)$$#b^34ra8avo)rgv2raoxg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
 INSTALLED_APPS = [
+    "api.apps.ApiConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -76,7 +76,7 @@ WSGI_APPLICATION = "sensors.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "DATABASE": "giovanni",
+        "NAME": "giovanni",
         "HOST": "database",
         "USER": "giovanni",
         "PASSWORD": "catrame",
@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Rome"
 
 USE_I18N = True
 
