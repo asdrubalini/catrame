@@ -6,6 +6,10 @@ import threading
 
 API_ENDPOINT = "http://api:8000"
 
+SENSOR_COUNT = 256
+RAND_SLEEP_MIN = 0.5
+RAND_SLEEP_MAX = 2
+
 
 @dataclass
 class Reading:
@@ -14,9 +18,7 @@ class Reading:
 
 
 def get_random_reading(sensor_id: int) -> Reading:
-    return Reading(
-        sensor_id=sensor_id, temperature=random.uniform(20.0, 25.0)
-    )
+    return Reading(sensor_id=sensor_id, temperature=random.uniform(20.0, 25.0))
 
 
 def insert_reading(reading: Reading):
@@ -33,7 +35,7 @@ class SensorThread(threading.Thread):
         self.sensor_id = sensor_id
 
     def __random_sleep(self):
-        time.sleep(random.uniform(5.0, 30.0))
+        time.sleep(random.uniform(RAND_SLEEP_MIN, RAND_SLEEP_MAX))
 
     def run(self):
         while True:
@@ -49,7 +51,7 @@ class SensorThread(threading.Thread):
 
 
 if __name__ == "__main__":
-    for i in range(0, 100):
+    for i in range(0, SENSOR_COUNT):
         SensorThread(sensor_id=i).start()
 
     # Sleep forever
