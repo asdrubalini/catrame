@@ -2,12 +2,18 @@ FROM python:3.10-slim
 
 ENV PYTHONBUFFERED 1
 
-RUN useradd -mU worker
-USER worker
+RUN apt update -y && \
+    apt upgrade -y && \
+    rm -rf /var/cache/apt/* && \
+    rm -rf /var/lib/apt/lists/*
 
 ADD ./requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
 
-WORKDIR /usr/src/worker
+RUN useradd -mU worker
+USER worker
 
-CMD ["python", "app/__main__.py"]
+COPY app/ /usr/src/app
+WORKDIR /usr/src/app/
+
+CMD ["python", "__main__.py"]

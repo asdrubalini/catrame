@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3'
 
 services:
   database:
@@ -32,11 +32,10 @@ services:
     restart: always
     networks:
       - database
+    ports:
+      - 8000:8000
     depends_on: 
-      - nginx
-    volumes:
-      - api_deps_cache:/home/api/.cache/
-      - ./api:/usr/src/api/
+      - database
 
   worker:
     build:
@@ -46,9 +45,6 @@ services:
       - database
     depends_on: 
       - api
-    volumes:
-      - worker_deps_cache:/home/api/.cache/
-      - ./worker:/usr/src/worker
   
   nginx:
     image: nginx:alpine
@@ -59,6 +55,8 @@ services:
       - 443:443
     volumes: 
       - ./nginx/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - api
     restart: always
 
 networks:
@@ -66,6 +64,3 @@ networks:
 
 volumes:
   mariadb_data:
-  api_deps_cache:
-  worker_deps_cache:
-

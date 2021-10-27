@@ -2,13 +2,19 @@ FROM python:3.10-slim
 
 ENV PYTHONBUFFERED 1
 
-RUN useradd -mU api
-USER api
+RUN apt update -y && \
+    apt upgrade -y && \
+    apt install libmariadb-dev build-essential -y && \
+    rm -rf /var/cache/apt/* && \
+    rm -rf /var/lib/apt/lists/*
 
 ADD ./requirements.txt /tmp/
 RUN pip install -r /tmp/requirements.txt
 
-WORKDIR /usr/src/api/
+RUN useradd -mU api
+USER api
 
-CMD ["python", "app/__main__.py"]
+COPY app/ /usr/src/app
+WORKDIR /usr/src/app/
 
+CMD ["python", "manage.py", "runserver"]
